@@ -1,0 +1,9 @@
+# Build output
+build/
+
+# Editor local files
+.vscode/
+
+# Temporary files
+*.swp
+*~
