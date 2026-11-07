@@ -65,12 +65,30 @@
  * @brief Function for application main entry.
  */
 
+// Initialization of LEDs as output pins
  static void leds_init(void)
 {
+    // Prepare output levels: HIGH means OFF
+    nrf_gpio_pin_write(LED_0, 1);
+    nrf_gpio_pin_write(LED_1, 1);
+    nrf_gpio_pin_write(LED_2, 1);
+    nrf_gpio_pin_write(LED_3, 1);
+
+    // Enable GPIO output drivers
     nrf_gpio_cfg_output(LED_0);
     nrf_gpio_cfg_output(LED_1);
     nrf_gpio_cfg_output(LED_2);
     nrf_gpio_cfg_output(LED_3);
+}
+
+// Turns LED on by its pin
+static void led_on(uint32_t pin){
+    nrf_gpio_pin_write(pin, 0);
+}
+
+// Turns LED off by its pin
+static void led_off(uint32_t pin){
+    nrf_gpio_pin_write(pin, 1);
 }
 
 // Blink a selected LED a specified number of times
@@ -78,10 +96,10 @@ static void blink_led(uint32_t led, uint32_t count)
 {
     for (uint32_t i = 0; i < count; i++)
     {
-        bsp_board_led_on(led);
+        led_on(led);
         nrf_delay_ms(BLINK_DELAY_MS);
 
-        bsp_board_led_off(led);
+        led_off(led);
         nrf_delay_ms(BLINK_DELAY_MS);
     }
 }
@@ -91,23 +109,23 @@ static void blink_led(uint32_t led, uint32_t count)
 int main(void)
 {
     /* Configure board. */
-    bsp_board_init(BSP_INIT_LEDS);
+    leds_init();
 
     /* Toggle LEDs. */
     while (true)
     {
         // Device ID: #7207
 
-        blink_led(0, 7);  // Yellow/green
+        blink_led(LED_0, 7);  // Yellow/green
         nrf_delay_ms(PAUSE_DELAY_MS);
 
-        blink_led(1, 2);  // Red
+        blink_led(LED_1, 2);  // Red
         nrf_delay_ms(PAUSE_DELAY_MS);
 
-        blink_led(2, 0);  // Green
+        blink_led(LED_2, 0);  // Green
         nrf_delay_ms(PAUSE_DELAY_MS);
 
-        blink_led(3, 7);  // Blue
+        blink_led(LED_3, 7);  // Blue
         nrf_delay_ms(PAUSE_DELAY_MS);
     }
 }
