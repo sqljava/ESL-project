@@ -51,15 +51,27 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "nrf_delay.h"
-#include "boards.h"
+#include "nrf_gpio.h"
 
 #define BLINK_DELAY_MS 200
 #define PAUSE_DELAY_MS 800
+
+#define LED_0 NRF_GPIO_PIN_MAP(0, 6)
+#define LED_1 NRF_GPIO_PIN_MAP(0, 8)
+#define LED_2 NRF_GPIO_PIN_MAP(1, 9)
+#define LED_3 NRF_GPIO_PIN_MAP(0, 12)
 
 /**
  * @brief Function for application main entry.
  */
 
+ static void leds_init(void)
+{
+    nrf_gpio_cfg_output(LED_0);
+    nrf_gpio_cfg_output(LED_1);
+    nrf_gpio_cfg_output(LED_2);
+    nrf_gpio_cfg_output(LED_3);
+}
 
 // Blink a selected LED a specified number of times
 static void blink_led(uint32_t led, uint32_t count)
