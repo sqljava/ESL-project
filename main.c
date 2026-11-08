@@ -55,6 +55,7 @@
 
 #define BLINK_DELAY_MS 200
 #define PAUSE_DELAY_MS 800
+#define POLL_INTERVAL_MS 10
 
 #define LED_0 NRF_GPIO_PIN_MAP(0, 6)
 #define LED_1 NRF_GPIO_PIN_MAP(0, 8)
@@ -68,7 +69,7 @@
  */
 
 // Initialization of LEDs as output pins
- static void leds_init(void)
+static void leds_init(void)
 {
     // Prepare output levels: HIGH means OFF
     nrf_gpio_pin_write(LED_0, 1);
@@ -89,12 +90,14 @@ static void button_init(void)
 }
 
 // Turns LED on by its pin
-static void led_on(uint32_t pin){
+static void led_on(uint32_t pin)
+{
     nrf_gpio_pin_write(pin, 0);
 }
 
 // Turns LED off by its pin
-static void led_off(uint32_t pin){
+static void led_off(uint32_t pin)
+{
     nrf_gpio_pin_write(pin, 1);
 }
 
@@ -104,6 +107,7 @@ static bool button_pressed(void)
     return nrf_gpio_pin_read(BUTTON_PIN) == 0;
 }
 
+// Wait with remembering state
 static void wait_while_pressed(uint32_t duration_ms)
 {
     uint32_t elapsed = 0;
@@ -112,8 +116,8 @@ static void wait_while_pressed(uint32_t duration_ms)
     {
         if (button_pressed())
         {
-            nrf_delay_ms(10);
-            elapsed += 10;
+            nrf_delay_ms(POLL_INTERVAL_MS);
+            elapsed += POLL_INTERVAL_MS;
         }
     }
 }
