@@ -61,6 +61,8 @@
 #define LED_2 NRF_GPIO_PIN_MAP(1, 9)
 #define LED_3 NRF_GPIO_PIN_MAP(0, 12)
 
+#define BUTTON_PIN NRF_GPIO_PIN_MAP(1, 6)
+
 /**
  * @brief Function for application main entry.
  */
@@ -81,6 +83,11 @@
     nrf_gpio_cfg_output(LED_3);
 }
 
+static void button_init(void)
+{
+    nrf_gpio_cfg_input(BUTTON_PIN, NRF_GPIO_PIN_PULLUP);
+}
+
 // Turns LED on by its pin
 static void led_on(uint32_t pin){
     nrf_gpio_pin_write(pin, 0);
@@ -91,16 +98,47 @@ static void led_off(uint32_t pin){
     nrf_gpio_pin_write(pin, 1);
 }
 
+// Check if button is pressed
+static bool button_pressed(void)
+{
+    return nrf_gpio_pin_read(BUTTON_PIN) == 0;
+}
+
+static void wait_while_pressed(uint32_t duration_ms)
+{
+    uint32_t elapsed = 0;
+
+    while (elapsed < duration_ms)
+    {
+        if (button_pressed())
+        {
+            nrf_delay_ms(10);
+            elapsed += 10;
+        }
+    }
+}
+
+
 // Blink a selected LED a specified number of times
 static void blink_led(uint32_t led, uint32_t count)
 {
     for (uint32_t i = 0; i < count; i++)
     {
+        // Waits until button is pressed
+        while (!button_pressed())
+        {
+        }
+
         led_on(led);
-        nrf_delay_ms(BLINK_DELAY_MS);
+        wait_while_pressed(BLINK_DELAY_MS);
+        
+        // Waits until button is pressed
+        while (!button_pressed())
+        {
+        }
 
         led_off(led);
-        nrf_delay_ms(BLINK_DELAY_MS);
+        wait_while_pressed(BLINK_DELAY_MS);
     }
 }
 
@@ -110,6 +148,7 @@ int main(void)
 {
     /* Configure board. */
     leds_init();
+    button_init();
 
     /* Toggle LEDs. */
     while (true)
@@ -117,16 +156,16 @@ int main(void)
         // Device ID: #7207
 
         blink_led(LED_0, 7);  // Yellow/green
-        nrf_delay_ms(PAUSE_DELAY_MS);
+        wait_while_pressed(PAUSE_DELAY_MS);
 
         blink_led(LED_1, 2);  // Red
-        nrf_delay_ms(PAUSE_DELAY_MS);
+        wait_while_pressed(PAUSE_DELAY_MS);
 
         blink_led(LED_2, 0);  // Green
-        nrf_delay_ms(PAUSE_DELAY_MS);
+        wait_while_pressed(PAUSE_DELAY_MS);
 
         blink_led(LED_3, 7);  // Blue
-        nrf_delay_ms(PAUSE_DELAY_MS);
+        wait_while_pressed(PAUSE_DELAY_MS);
     }
 }
 
