@@ -3113,5 +3113,11 @@
 //==========================================================
 
 // <<< end of configuration section >>>
+/* Workshop 4 drivers: hardware PWM and GPIOTE input events. */
+#define NRFX_PWM_ENABLED 1
+#define NRFX_PWM0_ENABLED 1
+#define NRFX_PWM_DEFAULT_CONFIG_IRQ_PRIORITY 6
+#define NRFX_GPIOTE_ENABLED 1
+#define NRFX_GPIOTE_CONFIG_IRQ_PRIORITY 6
+#define NRFX_GPIOTE_CONFIG_NUM_OF_LOW_POWER_EVENTS 1
 #endif //SDK_CONFIG_H
-

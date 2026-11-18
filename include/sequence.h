@@ -1,6 +1,4 @@
-#ifndef SEQUENCE_H
-#define SEQUENCE_H
-
-void sequence_run(void);
-
+#ifndef ESL_SEQUENCE_H
+#define ESL_SEQUENCE_H
+void sequence_tick(void);
 #endif
