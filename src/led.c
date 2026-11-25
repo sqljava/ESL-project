@@ -2,15 +2,14 @@
 #include "nrfx_pwm.h"
 
 #define PWM_TOP 1000U
-#define PWM_POLARITY 0x8000U
 
 static const nrfx_pwm_t pwm = NRFX_PWM_INSTANCE(0);
 
 static nrf_pwm_values_individual_t pwm_values = {
-    .channel_0 = PWM_POLARITY,
-    .channel_1 = PWM_POLARITY,
-    .channel_2 = PWM_POLARITY,
-    .channel_3 = PWM_POLARITY
+    .channel_0 = 0,
+    .channel_1 = 0,
+    .channel_2 = 0,
+    .channel_3 = 0
 };
 
 static const nrf_pwm_sequence_t pwm_sequence = {
@@ -22,11 +21,9 @@ static const nrf_pwm_sequence_t pwm_sequence = {
 
 static uint16_t rgb_to_pwm(uint8_t value)
 {
-    uint16_t duty = (uint16_t)(
+    return (uint16_t)(
         (uint32_t)value * PWM_TOP / 255U
     );
-
-    return PWM_POLARITY | duty;
 }
 
 static void pwm_start(void)
@@ -90,8 +87,7 @@ void led_set_rgb(rgb_color_t color)
 
 void led_set_indicator(bool on)
 {
-    uint16_t value = PWM_POLARITY |
-                     (on ? PWM_TOP : 0U);
+    uint16_t value = on ? PWM_TOP : 0U;
 
     if (pwm_values.channel_0 == value)
     {
