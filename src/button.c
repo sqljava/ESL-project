@@ -2,9 +2,11 @@
 #include "button.h"
 #include "nrf_gpio.h"
 #include "nrfx_gpiote.h"
+
 #define BUTTON_PIN NRF_GPIO_PIN_MAP(1, 6)
 #define DEBOUNCE_TICKS 3U
 #define DOUBLE_CLICK_TICKS 30U
+#define MAX_CLICK_TICKS 25U
 
 static volatile bool raw_pressed;
 static bool candidate;
@@ -12,6 +14,7 @@ static bool stable_pressed;
 static uint8_t stable_ticks;
 static bool first_click_pending;
 static uint8_t click_age;
+static uint8_t press_ticks;
 
 static void button_event_handler(nrfx_gpiote_pin_t pin,
                                  nrf_gpiote_polarity_t action)
@@ -34,6 +37,7 @@ bool button_init(void)
     stable_ticks = 0;
     first_click_pending = false;
     click_age = 0;
+    press_ticks = 0;
     nrfx_gpiote_in_event_enable(BUTTON_PIN, true);
     return true;
 }
@@ -41,26 +45,59 @@ bool button_init(void)
 bool button_double_click_tick(void)
 {
     bool raw = raw_pressed;
-    if (first_click_pending && ++click_age > DOUBLE_CLICK_TICKS)
+
+    if (stable_pressed && press_ticks < 255U)
+    {
+        ++press_ticks;
+    }
+
+    if (first_click_pending &&
+        ++click_age > DOUBLE_CLICK_TICKS)
+    {
         first_click_pending = false;
+    }
+
     if (raw != candidate)
     {
         candidate = raw;
         stable_ticks = 0;
         return false;
     }
-    if (stable_ticks < DEBOUNCE_TICKS) ++stable_ticks;
-    if (stable_ticks < DEBOUNCE_TICKS || candidate == stable_pressed)
+
+    if (stable_ticks < DEBOUNCE_TICKS)
+    {
+        ++stable_ticks;
+    }
+
+    if (stable_ticks < DEBOUNCE_TICKS ||
+        candidate == stable_pressed)
+    {
         return false;
+    }
+
     stable_pressed = candidate;
-    if (stable_pressed) return false; /* Count completed press-release clicks. */
+
+    if (stable_pressed)
+    {
+        press_ticks = 0;
+        return false;
+    }
+
+    if (press_ticks > MAX_CLICK_TICKS)
+    {
+        first_click_pending = false;
+        return false;
+    }
+
     if (first_click_pending)
     {
         first_click_pending = false;
         return true;
     }
+
     first_click_pending = true;
     click_age = 0;
+
     return false;
 }
 

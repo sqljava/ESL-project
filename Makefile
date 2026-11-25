@@ -32,7 +32,8 @@ SRC_FILES += \
   $(PROJ_DIR)/main.c \
   $(PROJ_DIR)/src/led.c \
   $(PROJ_DIR)/src/button.c \
-  $(PROJ_DIR)/src/sequence.c \
+  $(PROJ_DIR)/src/color_picker.c \
+  $(PROJ_DIR)/src/hsv.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_pwm.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_gpiote.c \
   $(SDK_ROOT)/modules/nrfx/mdk/system_nrf52840.c \
