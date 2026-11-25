@@ -36,6 +36,7 @@ SRC_FILES += \
   $(PROJ_DIR)/src/hsv.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_pwm.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_gpiote.c \
+  $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_timer.c \
   $(SDK_ROOT)/modules/nrfx/mdk/system_nrf52840.c \
 
 # Include folders common to all targets
