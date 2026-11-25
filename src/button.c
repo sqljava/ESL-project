@@ -63,3 +63,8 @@ bool button_double_click_tick(void)
     click_age = 0;
     return false;
 }
+
+bool button_is_pressed(void)
+{
+    return stable_pressed;
+}
